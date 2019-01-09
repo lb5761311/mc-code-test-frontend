@@ -504,41 +504,151 @@
     const rows = document.getElementsByClassName('row');
     const rat = document.getElementById("rats");
    window.document.onkeydown = function(ent) {
-                var event = ent || window.event;
-                var step =panel[Ntop][Nleft];
-                switch(event.keyCode) {
-                    case 37: //左
-                    if(!step['left']){
-                        Nleft--;
-                        rat.style.left = Math.max(LeftTop.offsetLeft, rat.offsetLeft - 22) + "px";
-                      }
-                        break;
-                    case 38: //上
-                    if(!step['top']){
-                        Ntop--;
-                        rat.style.top = Math.max( LeftTop.offsetTop, rat.offsetTop - 22) + "px";
-                      }
-                        break;
-                    case 39: //右
-                    if(!step['right']){
-                        if((Ntop==19)&&(Nleft==19)){
-                          console.log("ok --------=");
-                        }else{
-                          Nleft++;
-                          rat.style.left = Math.min(RightBottom.offsetLeft, rat.offsetLeft + 22) + "px";
-                        }
-                      }
-                        break;
-                    case 40: //下
-                    if(!step['bottom']){
-                        Ntop++;
-                        rat.style.top = Math.min(RightBottom.offsetTop, rat.offsetTop + 22) + "px";
-                      }
-                        break;
+                  Gomaze(Nrow,Ncol,'right');
+    }
 
-                }
-              
-            }
+    var Nrow = 0;
+    var Ncol =0;
+    function Gomaze(row,col,direct) {
+      let step =panel[0][0];
+      var flag =1;
+      let Row = 0;
+      let Col = 0;
+      console.log("start-----------");
+      console.log(row);
+      console.log(col);
+      console.log(direct);
+      if((row==19)&&(col==19)){
+        console.log("over-----------");
+      }else{
+        if(CheckLeftwall(row,col,direct)){
+          console.log("111-----------");
+          console.log(row);
+          console.log(col);
+          console.log(direct);
+          if(Checkforheadwall(row,col,direct)){
+            console.log("333-----------");
+            let newdir = Turnright(direct);
+            Gomaze(row,col,newdir);
+          }else{
+            console.log("444-----------");
+            var newStep = Gohead(row,col,direct);
+            console.log("step-----------");
+            console.log(newStep[0]);
+            console.log(newStep[1]);
+            console.log("step-----------");
+            Gomaze(newStep[0],newStep[1],direct);
+          }
+          
+        }else{
+          console.log("222-----------");
+          let newdir = Turnleft(direct);
+          console.log(row);
+          console.log(col);
+          console.log(newdir);
+          
+          var newStep = Gohead(row,col,newdir);
+          Gomaze(newStep[0],newStep[1],newdir);
+        }
+      }
+      
+    }
+    function Gohead(Nrow,Ncol,direct){
+      switch(direct){
+        case "top":
+          Ncol++;
+          rows[Nrow].children[Ncol].style.background = '#8CEA00';
+          break;
+        case "left":
+          Nrow--;
+          rows[Nrow].children[Ncol].style.background = '#003D79';
+          break;
+        case "bottom":
+          Ncol--;
+          rows[Nrow].children[Ncol].style.background = '#FF5151';
+          break;
+        case "right":
+          Nrow++;
+          rows[Nrow].children[Ncol].style.background = '#000';
+          break;   
+      }
+      var Step = [Nrow,Ncol];
+      return Step;
+    }
+    function Checkforheadwall(row,col,direct){
+      let check;
+      switch(direct){
+        case "top":
+          check = panel[row][col]['right'];
+          break;
+        case "left":
+          check = panel[row][col]['top'];
+          break;
+        case "right":
+          check = panel[row][col]['bottom'];
+          break;
+        case "bottom":
+          check = panel[row][col]['left'];
+          break;
+      }
+      return check;
+    }
+    function Turnright(direct){
+      let nextdir;
+      switch(direct){
+        case "top":
+          nextdir='right';
+          break;
+        case "left":
+          nextdir='top';
+          break;
+        case "right":
+          nextdir='bottom';
+          break;
+        case "bottom":
+          nextdir='left';
+          break;
+      }
+      return nextdir;
+    }
+    function Turnleft(direct){
+      let nextdir;
+      switch(direct){
+        case "top":
+          nextdir='left';
+          break;
+        case "left":
+          nextdir='bottom';
+          break;
+        case "right":
+          nextdir='top';
+          break;
+        case "bottom":
+          nextdir='right';
+          break;
+      }
+      return nextdir;
+    }
+    function CheckLeftwall(row,col,direct){
+      let check;
+      switch(direct){
+        case "top":
+          check = panel[row][col]['top'];
+          break;
+        case "left":
+          check = panel[row][col]['left'];
+          break;
+        case "right":
+          check = panel[row][col]['right'];
+          break;
+        case "bottom":
+          check = panel[row][col]['bottom'];
+          break;
+      }
+      return check;
+    }
+
+        console.log(rows);
         var LeftTop = rows[0].children[0];
         var RightBottom = rows[19].children[19];
         rat.style.left =  LeftTop.offsetLeft  + "px"; 
@@ -554,8 +664,9 @@
         }
         panel.push(eachRow)
     }
-    console.log(JSON.stringify(panel))
+   // console.log(JSON.stringify(panel))
   </script>
+
 </body>
 
 </html>
