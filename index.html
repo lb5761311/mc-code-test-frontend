@@ -13,7 +13,6 @@
       align-items: center;
       flex-direction: column;
     }
-    
     .row {
       display: flex;
       flex-direction: row;
@@ -42,12 +41,17 @@
     }
     
     .rat {
+      width: 20px;
+                height: 20px;
+                display: block;
+                position: absolute;
       background: orange!important;
     }
   </style>
 </head>
 
 <body>
+ <div id="rats" class="rat"></div>
   <div id="cells">
     <div class="row">
       <div class="top cell"></div>
@@ -492,9 +496,53 @@
   </div>
   <script>
     const value = {top:false, left:false, bottom:false, right:false};
+    var Nleft=0;
+    var Ntop=0;
+    var Nright=0;
+    var Nbottom=0;
     const panel = [];
     const rows = document.getElementsByClassName('row');
-  
+    const rat = document.getElementById("rats");
+   window.document.onkeydown = function(ent) {
+                var event = ent || window.event;
+                var step =panel[Ntop][Nleft];
+                switch(event.keyCode) {
+                    case 37: //左
+                    if(!step['left']){
+                        Nleft--;
+                        rat.style.left = Math.max(LeftTop.offsetLeft, rat.offsetLeft - 22) + "px";
+                      }
+                        break;
+                    case 38: //上
+                    if(!step['top']){
+                        Ntop--;
+                        rat.style.top = Math.max( LeftTop.offsetTop, rat.offsetTop - 22) + "px";
+                      }
+                        break;
+                    case 39: //右
+                    if(!step['right']){
+                        if((Ntop==19)&&(Nleft==19)){
+                          console.log("ok --------=");
+                        }else{
+                          Nleft++;
+                          rat.style.left = Math.min(RightBottom.offsetLeft, rat.offsetLeft + 22) + "px";
+                        }
+                      }
+                        break;
+                    case 40: //下
+                    if(!step['bottom']){
+                        Ntop++;
+                        rat.style.top = Math.min(RightBottom.offsetTop, rat.offsetTop + 22) + "px";
+                      }
+                        break;
+
+                }
+              
+            }
+        var LeftTop = rows[0].children[0];
+        var RightBottom = rows[19].children[19];
+        rat.style.left =  LeftTop.offsetLeft  + "px"; 
+        rat.style.top = LeftTop.offsetTop + 1 + "px";
     for(let row of rows) {
         const nodes = row.children;
         let eachRow = [];
